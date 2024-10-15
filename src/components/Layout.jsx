@@ -1,6 +1,10 @@
+import { Navbar } from "./Navbar";
 
-export const Layout = () => {
+export const Layout = ({ children }) => {
   return (
-    <div>Layout</div>
-  )
-}
+    <div className="container mx-auto">
+      <Navbar />
+      {children}
+    </div>
+  );
+};
