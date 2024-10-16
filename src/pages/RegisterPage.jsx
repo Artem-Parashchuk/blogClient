@@ -1,22 +1,38 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { registerUser } from "../redux/auth/authThunks";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { registerUserThunk } from "../redux/auth/registerThunks";
+import { getMeSelector, statusSelector } from "../redux/auth/authSelectors";
+import { toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
 
 export const RegisterPage = () => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const dispatch = useDispatch()
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const status = useSelector(statusSelector);
+  const isAuth = useSelector(getMeSelector);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (status) {
+      toast(status);
+    }
+    if (isAuth) {
+      navigate("/");
+    }
+  }, [status, isAuth, navigate]);
 
   const handleSubmit = () => {
-    try{
-      dispatch(registerUser({username, password}))
-      setUsername('')
-      setPassword('')
-    }catch(error) {
-      console.log(error)
+    try {
+      dispatch(registerUserThunk({ username, password }));
+      setUsername("");
+      setPassword("");
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
   return (
     <form
       onSubmit={(e) => e.preventDefault()}
@@ -28,7 +44,7 @@ export const RegisterPage = () => {
         <input
           type="text"
           value={username}
-          onChange={e => setUsername(e.target.value)}
+          onChange={(e) => setUsername(e.target.value)}
           placeholder="Ім'я"
           className="mt-1 text-black w-full rounded-lg border-gray-400 border py-1 px-2 text-xs outline-none placeholder:text-gray-700"
         />
@@ -37,9 +53,9 @@ export const RegisterPage = () => {
       <label className="text-xs text-gray-400">
         Пароль
         <input
-          type="text"
+          type="password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           placeholder="Пароль"
           className="mt-1 text-black w-full rounded-lg border-gray-400 border py-1 px-2 text-xs outline-none placeholder:text-gray-700"
         />
